@@ -1,0 +1,51 @@
+{
+  "name": "absolute-docx-freakout",
+  "version": "1.0.0",
+  "description": "Absolute DOCX Freakout — a simple .docx file viewer built with Electron and Mammoth.js",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "dev": "electron . --dev"
+  },
+  "author": "Electron Docx Viewer Team",
+  "license": "MIT",
+  "dependencies": {
+    "mammoth": "^1.6.0"
+  },
+  "devDependencies": {
+    "electron": "^32.1.2",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.absolutefreakout.absolute-docx-freakout",
+    "productName": "Absolute DOCX Freakout",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}"
+    ],
+    "mac": {
+      "target": "dmg",
+      "executableName": "docx-viewer"
+    },
+    "win": {
+      "target": "portable",
+      "executableName": "docx-viewer"
+    },
+    "linux": {
+      "target": "AppImage",
+      "executableName": "docx-viewer"
+    },
+    "icon": "assets/icon.png"
+  }
+}

@@ -1,0 +1,73 @@
+/* Reset/normalize styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  border: 2px dashed transparent;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+body.drag-over #content {
+  border-color: #007acc;
+  background: #f4faff;
+}
+
+.placeholder {
+  color: #555;
+  font-style: italic;
+}
+
+/* Basic styles to enhance rendered DOCX HTML (mammoth.js output) */
+#content img {
+  max-width: 100%;
+  height: auto;
+}
+
+#content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+}
+
+#content th,
+#content td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+#content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+#content p {
+  margin-bottom: 10px;
+}
+
+#content ul, #content ol {
+  margin-bottom: 10px;
+  padding-left: 30px;
+}
