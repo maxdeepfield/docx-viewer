@@ -55,7 +55,7 @@ function setupDragAndDrop({ showMessage }) {
     });
   });
 
-  window.addEventListener('drop', (event) => {
+  window.addEventListener('drop', async (event) => {
     preventDefaults(event);
     setDragging(false);
 
@@ -64,9 +64,12 @@ function setupDragAndDrop({ showMessage }) {
       return;
     }
 
-    const filePath = file.path || '';
-    if (!filePath.toLowerCase().endsWith('.docx')) {
-      console.warn('Dropped file is not a .docx:', filePath);
+    const fileName = (file.name || '').trim();
+    const loweredName = fileName.toLowerCase();
+    const isDocx = loweredName.endsWith('.docx');
+
+    if (!isDocx) {
+      console.warn('Dropped file is not a .docx:', { fileName });
       if (showMessage) {
         showMessage('Please drop a .docx file.');
       }
@@ -77,31 +80,44 @@ function setupDragAndDrop({ showMessage }) {
       showMessage('Loading document...');
     }
 
-    if (window.electronAPI && window.electronAPI.loadDocxFile) {
-      window.electronAPI
-        .loadDocxFile(filePath)
-        .then((result) => {
-          if (result && result.success === false && result.error && showMessage) {
-            showMessage(`Error: ${result.error}`);
-          }
-        })
-        .catch((err) => {
-          console.error('Failed to load DOCX via IPC:', err);
-          if (showMessage) {
-            showMessage('Failed to load document.');
-          }
-        });
+    if (window.electronAPI && window.electronAPI.loadDocxFromBuffer) {
+      try {
+        const buffer = await file.arrayBuffer();
+        const result = await window.electronAPI.loadDocxFromBuffer(buffer);
+        if (result && result.success === false && result.error && showMessage) {
+          showMessage(`Error: ${result.error}`);
+        } else if (result && result.success) {
+          console.log('DOCX loaded via drop:', fileName);
+        }
+      } catch (err) {
+        console.error('Failed to load DOCX via drop:', err);
+        if (showMessage) {
+          showMessage('Failed to load document.');
+        }
+      }
     } else {
-      console.error('electronAPI.loadDocxFile not available');
+      console.error('electronAPI.loadDocxFromBuffer not available');
       if (showMessage) {
         showMessage('Drag-and-drop is not available.');
       }
     }
   });
 
-  // Extra safety: prevent default navigation on body/document drag-drop
-  document.addEventListener('dragover', preventDefaults, false);
-  document.addEventListener('drop', preventDefaults, false);
+  // Extra safety: prevent navigation on document drag/drop without blocking our window handler
+  document.addEventListener(
+    'dragover',
+    (event) => {
+      event.preventDefault();
+    },
+    false
+  );
+  document.addEventListener(
+    'drop',
+    (event) => {
+      event.preventDefault();
+    },
+    false
+  );
 }
 
 function setupZoomShortcuts() {

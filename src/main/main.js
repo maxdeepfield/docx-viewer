@@ -46,23 +46,33 @@ async function showAbout() {
   }
 }
 
-async function convertAndSendDocx(filePath, targetWebContents = mainWindow?.webContents) {
+async function convertAndSendDocx(input, targetWebContents = mainWindow?.webContents) {
   try {
     if (!targetWebContents) {
       throw new Error('Main window not initialized');
     }
-    if (!filePath) {
-      throw new Error('No file path provided');
-    }
-    if (path.extname(filePath).toLowerCase() !== '.docx') {
-      throw new Error('Only .docx files are supported.');
-    }
-    if (!fs.existsSync(filePath)) {
-      throw new Error('File not found.');
+    if (!input) {
+      throw new Error('No input provided');
     }
 
-    console.log('Opening and converting DOCX:', filePath);
-    const conversion = await mammoth.convertToHtml({ path: filePath });
+    let conversion;
+    if (input.path) {
+      const filePath = input.path;
+      if (path.extname(filePath).toLowerCase() !== '.docx') {
+        throw new Error('Only .docx files are supported.');
+      }
+      if (!fs.existsSync(filePath)) {
+        throw new Error('File not found.');
+      }
+      console.log('Opening and converting DOCX from path:', filePath);
+      conversion = await mammoth.convertToHtml({ path: filePath });
+    } else if (input.buffer) {
+      console.log('Opening and converting DOCX from buffer');
+      conversion = await mammoth.convertToHtml({ buffer: Buffer.from(input.buffer) });
+    } else {
+      throw new Error('Invalid input type');
+    }
+
     console.log(
       'Mammoth conversion:',
       !!conversion.value,
@@ -94,7 +104,7 @@ async function openDocxDialog() {
       filters: [{ name: 'DOCX', extensions: ['docx'] }]
     });
     if (!result.canceled && result.filePaths.length > 0) {
-      return convertAndSendDocx(result.filePaths[0], mainWindow.webContents);
+      return convertAndSendDocx({ path: result.filePaths[0] }, mainWindow.webContents);
     }
     return { success: false, canceled: true };
   } catch (err) {
@@ -121,6 +131,7 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
 
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -129,8 +140,8 @@ function createWindow() {
 app.whenReady().then(() => {
   createWindow();
   ipcMain.handle('open-docx-dialog', openDocxDialog);
-  ipcMain.handle('load-docx-file', (event, filePath) =>
-    convertAndSendDocx(filePath, event.sender)
+  ipcMain.handle('load-docx-file', (event, input) =>
+    convertAndSendDocx(input, event.sender)
   );
   ipcMain.handle('adjust-zoom', (event, direction) => {
     const wc = event.sender;
