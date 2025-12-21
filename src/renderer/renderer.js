@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  if (window.electronAPI && window.electronAPI.onDocxHtml) {
-    window.electronAPI.onDocxHtml((event, html) => {
-      console.log('Received docx-html:', !!html, 'length:', html ? html.length : 0);
+  if (window.electronAPI && window.electronAPI.onContentHtml) {
+    window.electronAPI.onContentHtml((event, html) => {
+      console.log('Received content-html:', !!html, 'length:', html ? html.length : 0);
       if (contentEl) {
         contentEl.innerHTML = html || '<p style="color: red;">No content received.</p>';
       } else {
@@ -21,8 +21,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   } else {
-    console.error('electronAPI.onDocxHtml not available');
+    console.error('electronAPI.onContentHtml not available');
   }
+
+  // Handle XLSX sheet switching
+  window.showSheet = (index) => {
+    const tabs = document.querySelectorAll('.sheet-tab');
+    const containers = document.querySelectorAll('.sheet-content');
+
+    tabs.forEach((tab, i) => {
+      tab.classList.toggle('active', i === index);
+    });
+
+    containers.forEach((container, i) => {
+      container.classList.toggle('hidden', i !== index);
+    });
+  };
 
   setupZoomShortcuts();
   setupDragAndDrop({ showMessage });
@@ -66,12 +80,12 @@ function setupDragAndDrop({ showMessage }) {
 
     const fileName = (file.name || '').trim();
     const loweredName = fileName.toLowerCase();
-    const isDocx = loweredName.endsWith('.docx');
+    const isSupported = loweredName.endsWith('.docx') || loweredName.endsWith('.xlsx') || loweredName.endsWith('.xls');
 
-    if (!isDocx) {
-      console.warn('Dropped file is not a .docx:', { fileName });
+    if (!isSupported) {
+      console.warn('Dropped file is not supported:', { fileName });
       if (showMessage) {
-        showMessage('Please drop a .docx file.');
+        showMessage('Please drop a .docx or .xlsx file.');
       }
       return;
     }
@@ -80,23 +94,23 @@ function setupDragAndDrop({ showMessage }) {
       showMessage('Loading document...');
     }
 
-    if (window.electronAPI && window.electronAPI.loadDocxFromBuffer) {
+    if (window.electronAPI && window.electronAPI.loadFileFromBuffer) {
       try {
         const buffer = await file.arrayBuffer();
-        const result = await window.electronAPI.loadDocxFromBuffer(buffer);
+        const result = await window.electronAPI.loadFileFromBuffer(buffer, fileName);
         if (result && result.success === false && result.error && showMessage) {
           showMessage(`Error: ${result.error}`);
         } else if (result && result.success) {
-          console.log('DOCX loaded via drop:', fileName);
+          console.log('File loaded via drop:', fileName);
         }
       } catch (err) {
-        console.error('Failed to load DOCX via drop:', err);
+        console.error('Failed to load file via drop:', err);
         if (showMessage) {
           showMessage('Failed to load document.');
         }
       }
     } else {
-      console.error('electronAPI.loadDocxFromBuffer not available');
+      console.error('electronAPI.loadFileFromBuffer not available');
       if (showMessage) {
         showMessage('Drag-and-drop is not available.');
       }

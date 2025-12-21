@@ -1,15 +1,25 @@
-<![CDATA[<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Absolute DOCX Freakout</title>
+    <title>Absolute Docs Freakout</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="app">
-        <div id="content"><p class="placeholder">Drag & drop a DOCX file here or use File &gt; Open.</p></div>
+        <div id="content">
+            <div class="empty-state">
+                <div class="icon-placeholder">📄</div>
+                <h1>Ready to view?</h1>
+                <p>Drag & drop a <strong>.docx</strong> or <strong>.xlsx</strong> file here</p>
+                <p class="secondary">or use File > Open (Ctrl+O)</p>
+            </div>
+        </div>
     </div>
     <script src="renderer.js"></script>
 </body>
-</html>]]>
+</html>
