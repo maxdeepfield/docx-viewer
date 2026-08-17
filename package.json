@@ -41,7 +41,8 @@
     },
     "win": {
       "target": "portable",
-      "executableName": "docs-viewer"
+      "executableName": "docs-viewer",
+      "signAndEditExecutable": true
     },
     "linux": {
       "target": "AppImage",

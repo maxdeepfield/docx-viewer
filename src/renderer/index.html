@@ -11,6 +11,13 @@
 </head>
 <body>
     <div id="app">
+        <div id="find-bar" class="find-bar" role="search" aria-label="Find in document" hidden>
+            <input id="find-input" type="search" placeholder="Find in document" autocomplete="off" spellcheck="false" aria-label="Find in document">
+            <span id="find-count" class="find-count" aria-live="polite">0/0</span>
+            <button id="find-previous" type="button" title="Previous match (Shift+Enter)" aria-label="Previous match">&#8593;</button>
+            <button id="find-next" type="button" title="Next match (Enter)" aria-label="Next match">&#8595;</button>
+            <button id="find-close" type="button" title="Close (Esc)" aria-label="Close search">&#10005;</button>
+        </div>
         <div id="content">
             <div class="empty-state">
                 <div class="icon-placeholder">📄</div>

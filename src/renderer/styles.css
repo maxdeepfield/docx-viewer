@@ -32,6 +32,76 @@ body {
   height: 100vh;
 }
 
+.find-bar {
+  position: fixed;
+  top: 12px;
+  right: 24px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--secondary-bg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.find-bar[hidden] {
+  display: none;
+}
+
+.find-bar input {
+  width: min(260px, 45vw);
+  padding: 7px 9px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  outline: none;
+  background: #0f172a;
+  color: var(--text-color);
+  font: inherit;
+}
+
+.find-bar input:focus {
+  border-color: var(--accent-color);
+}
+
+.find-count {
+  min-width: 48px;
+  color: var(--placeholder-color);
+  font-size: 12px;
+  text-align: center;
+}
+
+.find-count.no-results {
+  color: #f87171;
+}
+
+.find-bar button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.find-bar button:hover {
+  background: var(--border-color);
+}
+
+::highlight(document-search-results) {
+  color: inherit;
+  background-color: #fde047;
+}
+
+::highlight(document-search-current) {
+  color: #111827;
+  background-color: #fb923c;
+}
 #content {
   flex: 1;
   overflow: auto;
